@@ -289,6 +289,31 @@
 
   .marcador-nota { margin-top: 18px; font-size: 13px; color: var(--tinta-suave); font-style: italic; font-family: 'Cormorant Garamond', serif; }
 
+  /* ---------- Vestimenta ---------- */
+  .vestimenta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 26px;
+  }
+  .atuendo { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .atuendo .circulo {
+    width: clamp(74px, 20vw, 92px);
+    height: clamp(74px, 20vw, 92px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    box-shadow: var(--sombra), inset 0 0 0 4px rgba(255, 255, 255, .5);
+  }
+  .atuendo.rosa .circulo { background: linear-gradient(140deg, #f6d5de, var(--rosa)); }
+  .atuendo.azul .circulo { background: linear-gradient(140deg, #cdddef, var(--azul)); }
+  .atuendo h4 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; }
+  .atuendo.rosa h4 { color: #c2708c; }
+  .atuendo.azul h4 { color: #5f83ab; }
+  .atuendo p { font-size: 13px; color: var(--tinta-suave); }
+
   /* ---------- Formulario ---------- */
   .campo { text-align: left; margin: 18px 0; }
   .campo label { display: block; letter-spacing: 3px; text-transform: uppercase; font-size: 11px; color: var(--oro); margin-bottom: 8px; }
@@ -427,7 +452,28 @@
     <p class="marcador-nota revela">Tu voto se envía junto con tu confirmación ↓</p>
   </section>
 
-  <!-- 4 · Confirmación -->
+  <!-- 4 · Vestimenta -->
+  <section>
+    <div class="tarjeta revela">
+      <p class="eyebrow">Vestimenta</p>
+      <div class="divisor">✦</div>
+      <p class="serif" style="font-style: italic; font-size: 19px; color: var(--tinta-suave);">Ven vestido del color de tu corazonada</p>
+      <div class="vestimenta">
+        <div class="atuendo rosa">
+          <div class="circulo">🎀</div>
+          <h4>Rosa</h4>
+          <p>si crees que es niña</p>
+        </div>
+        <div class="atuendo azul">
+          <div class="circulo">🧢</div>
+          <h4>Azul</h4>
+          <p>si crees que es niño</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · Confirmación -->
   <section>
     <div class="tarjeta revela">
       <div id="formulario">
