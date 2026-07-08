@@ -316,6 +316,30 @@
   #cierre h3 { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(22px, 6vw, 28px); margin: 16px 0 6px; }
   #cierre .script { font-size: clamp(34px, 9vw, 46px); }
 
+  /* ---------- Botón de música ---------- */
+  #btn-musica {
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    z-index: 40;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid rgba(176, 141, 87, .4);
+    background: rgba(255, 253, 249, .92);
+    color: var(--oro);
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: var(--sombra);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: transform .25s ease;
+  }
+  #btn-musica:active { transform: scale(.92); }
+  #btn-musica.sonando { animation: girar 4s linear infinite; }
+  @keyframes girar { to { transform: rotate(360deg); } }
+
   @media (max-width: 380px) {
     .cuenta .celda { min-width: 58px; }
     .equipos { gap: 10px; }
@@ -439,6 +463,9 @@
   </section>
 </main>
 
+<audio id="musica" src="assets/cancion.mp3" loop preload="auto"></audio>
+<button id="btn-musica" aria-label="Silenciar o reproducir música">♪</button>
+
 <script src="config.js"></script>
 <script>
   // ---------- Sobre de apertura ----------
@@ -450,7 +477,37 @@
     document.querySelectorAll('#hero .revela').forEach((el, i) => {
       setTimeout(() => el.classList.add('visible'), 250 + i * 180);
     });
+    iniciarMusica();
   }, { once: true });
+
+  // ---------- Música ----------
+  const musica = document.getElementById('musica');
+  const btnMusica = document.getElementById('btn-musica');
+  let hayCancion = true;
+  musica.addEventListener('error', () => { hayCancion = false; });
+
+  function pintarBotonMusica() {
+    btnMusica.classList.toggle('sonando', !musica.paused);
+    btnMusica.textContent = musica.paused ? '♪' : '♫';
+    btnMusica.style.opacity = musica.paused ? '.75' : '1';
+  }
+
+  function iniciarMusica() {
+    if (!hayCancion || musica.error) return;
+    musica.volume = 0.85;
+    musica.play().then(() => {
+      btnMusica.style.display = 'flex';
+      pintarBotonMusica();
+    }).catch(() => {
+      // El navegador lo bloqueó: mostramos el botón para iniciarla manualmente
+      if (hayCancion && !musica.error) { btnMusica.style.display = 'flex'; pintarBotonMusica(); }
+    });
+  }
+
+  btnMusica.addEventListener('click', () => {
+    if (musica.paused) { musica.play().catch(() => {}); } else { musica.pause(); }
+    setTimeout(pintarBotonMusica, 80);
+  });
 
   // ---------- Animaciones al hacer scroll ----------
   const observador = new IntersectionObserver(entradas => {
