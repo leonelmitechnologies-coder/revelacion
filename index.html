@@ -43,6 +43,10 @@
     line-height: 1.6;
   }
 
+  /* Mientras el sobre está cerrado no se puede hacer scroll */
+  body.cerrado { overflow: hidden; height: 100dvh; }
+  html:has(body.cerrado) { overflow: hidden; height: 100dvh; }
+
   /* Textura de grano sutil sobre todo el fondo */
   body::before {
     content: "";
@@ -314,7 +318,7 @@
   }
 </style>
 </head>
-<body>
+<body class="cerrado">
 
 <div class="halo halo-rosa"></div>
 <div class="halo halo-azul"></div>
@@ -435,6 +439,8 @@
   // ---------- Sobre de apertura ----------
   const sobre = document.getElementById('sobre');
   sobre.addEventListener('click', () => {
+    window.scrollTo(0, 0);
+    document.body.classList.remove('cerrado');
     sobre.classList.add('abierto');
     document.querySelectorAll('#hero .revela').forEach((el, i) => {
       setTimeout(() => el.classList.add('visible'), 250 + i * 180);
