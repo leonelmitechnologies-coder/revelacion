@@ -408,17 +408,15 @@
     <h3 class="script revela" style="font-size: clamp(38px, 10vw, 54px);">¿A quién se parecerá?</h3>
     <p class="revela serif" style="font-style: italic; color: var(--tinta-suave);">Elige tu equipo y díselo al mundo</p>
     <div class="equipos revela">
-      <div class="equipo tochi" data-voto="Tochi" role="button" tabindex="0" aria-label="Votar Team Tochi (niña)">
+      <div class="equipo tochi" data-voto="Tochi" role="button" tabindex="0" aria-label="Votar niña, como su mami">
         <span class="palomita">✓</span>
         <img src="assets/team-girl.png" alt="Aleida de bebé — Team Girl">
-        <h4>Team Tochi</h4>
-        <p>como su mami 🎀</p>
+        <h4>Como su mami 🎀</h4>
       </div>
-      <div class="equipo chebi" data-voto="Chebi" role="button" tabindex="0" aria-label="Votar Team Chebi (niño)">
+      <div class="equipo chebi" data-voto="Chebi" role="button" tabindex="0" aria-label="Votar niño, como su papi">
         <span class="palomita">✓</span>
         <img src="assets/team-boy.png" alt="Leonel de niño — Team Boy">
-        <h4>Team Chebi</h4>
-        <p>como su papi 🧢</p>
+        <h4>Como su papi 🧢</h4>
       </div>
     </div>
     <p class="marcador-nota revela">Tu voto se envía junto con tu confirmación ↓</p>
@@ -542,7 +540,7 @@
       card.classList.add('elegido');
       voto = card.dataset.voto;
       document.getElementById('voto-visible').value =
-        voto === 'Tochi' ? 'Team Tochi 🎀 (niña)' : 'Team Chebi 🧢 (niño)';
+        voto === 'Tochi' ? 'Como su mami 🎀 (niña)' : 'Como su papi 🧢 (niño)';
     };
     card.addEventListener('click', elegir);
     card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); elegir(); } });
@@ -567,10 +565,12 @@
   }
 
   // Si esta familia ya confirmó desde este teléfono, mostramos el agradecimiento
+  const etiquetaVoto = v => v === 'Tochi' ? 'Niña 🎀' : v === 'Chebi' ? 'Niño 🧢' : '—';
+
   const previa = localStorage.getItem('rsvp_tochi_chebi');
   if (previa) {
     const d = JSON.parse(previa);
-    mostrarGracias(`${d.familia} · ${d.personas} ${d.personas == 1 ? 'persona' : 'personas'} · Team ${d.voto || '—'}`);
+    mostrarGracias(`${d.familia} · ${d.personas} ${d.personas == 1 ? 'persona' : 'personas'} · ${etiquetaVoto(d.voto)}`);
   }
 
   btn.addEventListener('click', async () => {
@@ -595,11 +595,11 @@
       const data = await res.json();
       if (!data.ok) throw new Error('respuesta-invalida');
       localStorage.setItem('rsvp_tochi_chebi', JSON.stringify({ familia, personas, voto }));
-      mostrarGracias(`${familia} · ${personas} ${personas == 1 ? 'persona' : 'personas'} · Team ${voto}`);
+      mostrarGracias(`${familia} · ${personas} ${personas == 1 ? 'persona' : 'personas'} · ${etiquetaVoto(voto)}`);
     } catch (err) {
       btn.disabled = false;
       if (WHATSAPP_PHONE) {
-        const texto = encodeURIComponent(`¡Hola! Somos ${familia} y confirmamos asistencia a la revelación de género (${personas} ${personas == 1 ? 'persona' : 'personas'}). ¡Vamos con Team ${voto}! 🧸`);
+        const texto = encodeURIComponent(`¡Hola! Somos ${familia} y confirmamos asistencia a la revelación de género (${personas} ${personas == 1 ? 'persona' : 'personas'}). Nuestro voto: ${voto === 'Tochi' ? 'niña, como su mami 🎀' : 'niño, como su papi 🧢'} 🧸`);
         msj.className = 'error';
         msj.innerHTML = `No pudimos registrar tu confirmación en línea. <a href="https://wa.me/${WHATSAPP_PHONE}?text=${texto}" style="color:var(--oro);font-weight:500;">Confírmanos por WhatsApp aquí</a> 💬`;
       } else {
