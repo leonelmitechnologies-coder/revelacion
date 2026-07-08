@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invitados — ¿Tochi o Chebi?</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="assets/chebi.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Great+Vibes&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --crema: #faf6ef;
+    --arena: #f1e8da;
+    --oro: #b08d57;
+    --oro-claro: #cfae7a;
+    --tinta: #6d5c4b;
+    --tinta-suave: #8a7660;
+    --rosa: #e5b8c4;
+    --rosa-fuerte: #c2708c;
+    --azul: #a9c3dd;
+    --azul-fuerte: #5f83ab;
+    --sombra: 0 18px 50px -18px rgba(109, 92, 75, .35);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    color: var(--tinta);
+    background:
+      radial-gradient(circle at 20% 10%, #f6e3e8, transparent 50%),
+      radial-gradient(circle at 85% 90%, #e2ecf5, transparent 50%),
+      var(--crema);
+    min-height: 100vh;
+    padding: 28px 18px 60px;
+  }
+  .caja { max-width: 760px; margin: 0 auto; }
+
+  h1 { font-family: 'Great Vibes', cursive; font-weight: 400; font-size: clamp(38px, 9vw, 52px); color: var(--oro); text-align: center; }
+  .sub { text-align: center; letter-spacing: 4px; text-transform: uppercase; font-size: 11px; color: var(--tinta-suave); margin-bottom: 28px; }
+
+  .tarjeta {
+    background: rgba(255, 253, 249, .9);
+    border: 1px solid rgba(176, 141, 87, .28);
+    border-radius: 20px;
+    padding: 26px 22px;
+    box-shadow: var(--sombra);
+    margin-bottom: 18px;
+  }
+
+  /* PIN */
+  #pin-panel { max-width: 380px; margin: 12vh auto 0; text-align: center; }
+  #pin-panel input {
+    width: 100%;
+    text-align: center;
+    font-size: 28px;
+    letter-spacing: 14px;
+    font-family: 'Cormorant Garamond', serif;
+    border: 1px solid rgba(176, 141, 87, .4);
+    border-radius: 12px;
+    padding: 14px;
+    background: var(--crema);
+    color: var(--tinta);
+    outline: none;
+    margin: 18px 0 14px;
+  }
+  #pin-error { color: #b3574d; font-size: 13px; min-height: 18px; }
+
+  .boton {
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--crema);
+    background: linear-gradient(120deg, #a9834e, #c9a26b);
+    padding: 13px 30px;
+    border-radius: 40px;
+    box-shadow: 0 10px 24px -10px rgba(169, 131, 78, .8);
+  }
+  .boton:active { transform: scale(.97); }
+
+  /* Panel */
+  #panel { display: none; }
+
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+  .kpi { background: rgba(255, 253, 249, .9); border: 1px solid rgba(176, 141, 87, .28); border-radius: 16px; padding: 18px 8px; text-align: center; box-shadow: var(--sombra); }
+  .kpi .num { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 600; color: var(--oro); line-height: 1; }
+  .kpi .lab { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--tinta-suave); margin-top: 6px; }
+
+  .titulo-seccion { letter-spacing: 4px; text-transform: uppercase; font-size: 11px; color: var(--oro); text-align: center; margin-bottom: 14px; }
+
+  /* Marcador */
+  .marcador { display: flex; align-items: center; justify-content: space-between; font-family: 'Cormorant Garamond', serif; font-size: 18px; margin-bottom: 10px; }
+  .marcador .tochi { color: var(--rosa-fuerte); font-weight: 600; }
+  .marcador .chebi { color: var(--azul-fuerte); font-weight: 600; }
+  .barra { display: flex; height: 22px; border-radius: 12px; overflow: hidden; background: var(--arena); }
+  .barra .lado-tochi { background: linear-gradient(90deg, #eec3d0, var(--rosa-fuerte)); transition: width .8s ease; }
+  .barra .lado-chebi { background: linear-gradient(90deg, var(--azul-fuerte), #bad0e6); transition: width .8s ease; }
+
+  /* Tabla */
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--oro); text-align: left; padding: 10px 8px; border-bottom: 1px solid rgba(176, 141, 87, .3); }
+  td { padding: 12px 8px; border-bottom: 1px solid rgba(176, 141, 87, .14); font-size: 15px; }
+  td.familia { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; }
+  td.centro, th.centro { text-align: center; }
+  .pill { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 12px; }
+  .pill.Tochi { background: #f6e3e8; color: var(--rosa-fuerte); }
+  .pill.Chebi { background: #e2ecf5; color: var(--azul-fuerte); }
+  td.fecha { font-size: 12px; color: var(--tinta-suave); white-space: nowrap; }
+
+  #estado { text-align: center; color: var(--tinta-suave); font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 17px; padding: 20px 0; }
+  .acciones { text-align: center; margin-top: 8px; }
+
+  @media (max-width: 520px) {
+    td.fecha { display: none; }
+    th.fecha { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="caja">
+  <h1>¿Tochi o Chebi?</h1>
+  <p class="sub">Panel de invitados</p>
+
+  <!-- Acceso con PIN -->
+  <div id="pin-panel" class="tarjeta">
+    <p style="letter-spacing:3px;text-transform:uppercase;font-size:12px;color:var(--oro);">Ingresa el PIN</p>
+    <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+    <p id="pin-error"></p>
+    <button class="boton" id="btn-entrar">Entrar</button>
+  </div>
+
+  <!-- Panel -->
+  <div id="panel">
+    <div class="kpis">
+      <div class="kpi"><div class="num" id="k-familias">0</div><div class="lab">Familias</div></div>
+      <div class="kpi"><div class="num" id="k-personas">0</div><div class="lab">Personas</div></div>
+      <div class="kpi"><div class="num" id="k-votos">0 · 0</div><div class="lab">🎀 vs 🧢</div></div>
+    </div>
+
+    <div class="tarjeta">
+      <p class="titulo-seccion">Marcador de la apuesta</p>
+      <div class="marcador">
+        <span class="tochi">Team Tochi 🎀 <span id="m-tochi">0</span></span>
+        <span class="chebi"><span id="m-chebi">0</span> 🧢 Team Chebi</span>
+      </div>
+      <div class="barra">
+        <div class="lado-tochi" id="b-tochi" style="width:50%"></div>
+        <div class="lado-chebi" id="b-chebi" style="width:50%"></div>
+      </div>
+    </div>
+
+    <div class="tarjeta">
+      <p class="titulo-seccion">Familias confirmadas</p>
+      <div id="estado">Cargando…</div>
+      <table id="tabla" style="display:none;">
+        <thead>
+          <tr><th>Familia</th><th class="centro">Personas</th><th class="centro">Voto</th><th class="fecha">Registro</th></tr>
+        </thead>
+        <tbody id="filas"></tbody>
+      </table>
+      <div class="acciones">
+        <button class="boton" id="btn-actualizar" style="margin-top:16px;">⟳ Actualizar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script>
+  const pinPanel = document.getElementById('pin-panel');
+  const panel = document.getElementById('panel');
+  const pinInput = document.getElementById('pin');
+  const pinError = document.getElementById('pin-error');
+
+  function entrar() {
+    if (pinInput.value === ADMIN_PIN) {
+      sessionStorage.setItem('admin_ok', '1');
+      pinPanel.style.display = 'none';
+      panel.style.display = 'block';
+      cargar();
+    } else {
+      pinError.textContent = 'PIN incorrecto, intenta de nuevo.';
+      pinInput.value = '';
+      pinInput.focus();
+    }
+  }
+  document.getElementById('btn-entrar').addEventListener('click', entrar);
+  pinInput.addEventListener('keydown', e => { if (e.key === 'Enter') entrar(); });
+
+  if (sessionStorage.getItem('admin_ok') === '1') {
+    pinPanel.style.display = 'none';
+    panel.style.display = 'block';
+    cargar();
+  }
+
+  async function cargar() {
+    const estado = document.getElementById('estado');
+    const tabla = document.getElementById('tabla');
+    const filas = document.getElementById('filas');
+    estado.style.display = 'block';
+    estado.textContent = 'Cargando…';
+    tabla.style.display = 'none';
+
+    try {
+      if (!SCRIPT_URL) throw new Error('Falta configurar SCRIPT_URL en config.js');
+      const res = await fetch(`${SCRIPT_URL}?action=list&t=${Date.now()}`);
+      const data = await res.json();
+      if (!data.ok) throw new Error('Respuesta inválida del servidor');
+
+      const lista = data.registros || [];
+      let personas = 0, vTochi = 0, vChebi = 0;
+      filas.innerHTML = '';
+
+      lista.slice().reverse().forEach(r => {
+        personas += Number(r.personas) || 0;
+        if (r.voto === 'Tochi') vTochi++;
+        if (r.voto === 'Chebi') vChebi++;
+        const fecha = r.fecha ? new Date(r.fecha).toLocaleString('es-MX', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="familia"></td>
+          <td class="centro"></td>
+          <td class="centro"><span class="pill ${r.voto === 'Tochi' || r.voto === 'Chebi' ? r.voto : ''}"></span></td>
+          <td class="fecha"></td>`;
+        tr.children[0].textContent = r.familia;
+        tr.children[1].textContent = r.personas;
+        tr.children[2].firstElementChild.textContent = r.voto === 'Tochi' ? '🎀 Tochi' : r.voto === 'Chebi' ? '🧢 Chebi' : '—';
+        tr.children[3].textContent = fecha;
+        filas.appendChild(tr);
+      });
+
+      document.getElementById('k-familias').textContent = lista.length;
+      document.getElementById('k-personas').textContent = personas;
+      document.getElementById('k-votos').textContent = `${vTochi} · ${vChebi}`;
+      document.getElementById('m-tochi').textContent = vTochi;
+      document.getElementById('m-chebi').textContent = vChebi;
+      const total = vTochi + vChebi;
+      document.getElementById('b-tochi').style.width = total ? (vTochi / total * 100) + '%' : '50%';
+      document.getElementById('b-chebi').style.width = total ? (vChebi / total * 100) + '%' : '50%';
+
+      if (lista.length === 0) {
+        estado.textContent = 'Aún no hay confirmaciones. ¡Comparte la invitación! 💌';
+      } else {
+        estado.style.display = 'none';
+        tabla.style.display = 'table';
+      }
+    } catch (err) {
+      estado.textContent = '⚠ No se pudieron cargar los datos: ' + err.message;
+    }
+  }
+
+  document.getElementById('btn-actualizar').addEventListener('click', cargar);
+</script>
+</body>
+</html>

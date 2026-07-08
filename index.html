@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Tochi o Chebi? — Revelación de género</title>
+<meta name="description" content="Leonel & Aleida te invitan a descubrir juntos el gran secreto. 26 de julio de 2026 · Quinta Treviño, Gral. Zuazua, N.L.">
+<!-- Open Graph: la URL de og:image se vuelve absoluta al publicar -->
+<meta property="og:title" content="¿Tochi o Chebi? 🧸">
+<meta property="og:description" content="Leonel & Aleida te invitan a la revelación de género · 26 de julio 2026, 4:00 PM · Quinta Treviño, Gral. Zuazua, N.L.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/tochi.png">
+<link rel="icon" href="assets/tochi.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Great+Vibes&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --crema: #faf6ef;
+    --arena: #f1e8da;
+    --arena-2: #e7dac6;
+    --oro: #b08d57;
+    --oro-claro: #cfae7a;
+    --tinta: #6d5c4b;
+    --tinta-suave: #8a7660;
+    --rosa: #e5b8c4;
+    --rosa-suave: #f6e3e8;
+    --azul: #a9c3dd;
+    --azul-suave: #e2ecf5;
+    --sombra: 0 18px 50px -18px rgba(109, 92, 75, .35);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    color: var(--tinta);
+    background: var(--crema);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* Textura de grano sutil sobre todo el fondo */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: .5;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.55 0 0 0 0 0.47 0 0 0 0 0.37 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .halo {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(90px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .halo-rosa { width: 55vw; height: 55vw; max-width: 480px; max-height: 480px; background: var(--rosa); opacity: .25; top: -8%; left: -18%; }
+  .halo-azul { width: 60vw; height: 60vw; max-width: 520px; max-height: 520px; background: var(--azul); opacity: .25; bottom: -10%; right: -20%; }
+
+  main { position: relative; z-index: 2; }
+
+  /* ---------- Sobre / portada de apertura ---------- */
+  #sobre {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 26px;
+    background:
+      radial-gradient(circle at 30% 20%, var(--rosa-suave), transparent 55%),
+      radial-gradient(circle at 75% 85%, var(--azul-suave), transparent 55%),
+      var(--arena);
+    cursor: pointer;
+    transition: opacity 1s ease, visibility 1s;
+    padding: 24px;
+    text-align: center;
+  }
+  #sobre.abierto { opacity: 0; visibility: hidden; }
+
+  .sello {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 35% 30%, #d9b98a, var(--oro) 70%);
+    color: var(--crema);
+    box-shadow: var(--sombra), inset 0 0 0 5px rgba(250, 246, 239, .35), inset 0 0 0 7px rgba(176, 141, 87, .9);
+    font-family: 'Cormorant Garamond', serif;
+    animation: latido 2.4s ease-in-out infinite;
+  }
+  .sello span { font-size: 34px; letter-spacing: 2px; }
+  .sello small { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; }
+
+  @keyframes latido {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+
+  #sobre h1 { font-family: 'Great Vibes', cursive; font-weight: 400; font-size: clamp(38px, 9vw, 56px); color: var(--oro); }
+  #sobre p { letter-spacing: 4px; text-transform: uppercase; font-size: 12px; color: var(--tinta-suave); }
+
+  /* ---------- Secciones ---------- */
+  section { padding: 72px 24px; max-width: 640px; margin: 0 auto; text-align: center; }
+
+  .revela { opacity: 0; transform: translateY(26px); transition: opacity .9s ease, transform .9s ease; }
+  .revela.visible { opacity: 1; transform: none; }
+
+  .eyebrow { letter-spacing: 5px; text-transform: uppercase; font-size: 12px; color: var(--oro); margin-bottom: 14px; }
+
+  .script { font-family: 'Great Vibes', cursive; font-weight: 400; color: var(--oro); }
+  .serif { font-family: 'Cormorant Garamond', serif; }
+
+  .divisor {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    justify-content: center;
+    color: var(--oro-claro);
+    margin: 26px auto;
+  }
+  .divisor::before, .divisor::after {
+    content: "";
+    height: 1px;
+    width: 64px;
+    background: linear-gradient(90deg, transparent, var(--oro-claro));
+  }
+  .divisor::after { background: linear-gradient(90deg, var(--oro-claro), transparent); }
+
+  /* ---------- Hero ---------- */
+  #hero { padding-top: 96px; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; }
+
+  #hero .nombres { font-family: 'Cormorant Garamond', serif; letter-spacing: 6px; text-transform: uppercase; font-size: clamp(15px, 4vw, 19px); }
+  #hero .amp { font-family: 'Great Vibes', cursive; font-size: 1.6em; color: var(--oro); text-transform: none; letter-spacing: 0; padding: 0 6px; }
+
+  #hero h2 {
+    font-family: 'Great Vibes', cursive;
+    font-weight: 400;
+    font-size: clamp(56px, 15vw, 96px);
+    line-height: 1.05;
+    margin: 18px 0 6px;
+    background: linear-gradient(120deg, #a9834e, #d8bc8a 45%, #a9834e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  #hero .subtitulo { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(17px, 4.6vw, 21px); color: var(--tinta-suave); }
+
+  .ositos {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 8px;
+    margin: 34px auto 10px;
+  }
+  .ositos img { filter: drop-shadow(0 14px 22px rgba(109, 92, 75, .28)); }
+  .osita-tochi { width: clamp(120px, 34vw, 170px); animation: flotar 5s ease-in-out infinite; }
+  .osito-chebi { width: clamp(130px, 38vw, 190px); animation: flotar 5s ease-in-out 1.2s infinite; }
+
+  @keyframes flotar {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(-1.5deg); }
+  }
+
+  .fecha-hero { letter-spacing: 5px; font-size: 13px; text-transform: uppercase; color: var(--tinta-suave); margin-top: 22px; }
+
+  .flecha { margin-top: 34px; color: var(--oro); font-size: 22px; animation: bajar 1.8s ease-in-out infinite; }
+  @keyframes bajar { 0%, 100% { transform: translateY(0); opacity: .6; } 50% { transform: translateY(8px); opacity: 1; } }
+
+  /* ---------- Tarjeta detalles ---------- */
+  .tarjeta {
+    background: rgba(255, 253, 249, .82);
+    border: 1px solid rgba(176, 141, 87, .28);
+    border-radius: 22px;
+    padding: 38px 26px;
+    box-shadow: var(--sombra);
+    backdrop-filter: blur(4px);
+  }
+
+  .dato { margin: 22px 0; }
+  .dato .etq { letter-spacing: 4px; text-transform: uppercase; font-size: 11px; color: var(--oro); margin-bottom: 4px; }
+  .dato .val { font-family: 'Cormorant Garamond', serif; font-size: 24px; }
+  .dato .val em { font-size: 17px; display: block; font-style: normal; color: var(--tinta-suave); font-family: 'Jost', sans-serif; font-weight: 300; }
+
+  .boton {
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--crema);
+    background: linear-gradient(120deg, #a9834e, #c9a26b);
+    padding: 15px 34px;
+    border-radius: 40px;
+    box-shadow: 0 10px 24px -10px rgba(169, 131, 78, .8);
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .boton:active { transform: scale(.97); }
+  .boton:hover { transform: translateY(-2px); box-shadow: 0 14px 28px -10px rgba(169, 131, 78, .9); }
+  .boton[disabled] { opacity: .55; pointer-events: none; }
+
+  .boton-linea {
+    background: none;
+    color: var(--oro);
+    border: 1px solid var(--oro-claro);
+    box-shadow: none;
+  }
+
+  /* ---------- Cuenta regresiva ---------- */
+  .cuenta {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 26px;
+  }
+  .cuenta .celda {
+    background: var(--crema);
+    border: 1px solid rgba(176, 141, 87, .3);
+    border-radius: 14px;
+    min-width: 66px;
+    padding: 12px 6px;
+  }
+  .cuenta .num { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 500; color: var(--tinta); line-height: 1; }
+  .cuenta .lab { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--tinta-suave); margin-top: 6px; }
+
+  /* ---------- Votación ---------- */
+  .equipos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 30px;
+  }
+  .equipo {
+    position: relative;
+    border-radius: 20px;
+    padding: 22px 12px 18px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+  }
+  .equipo.tochi { background: linear-gradient(170deg, var(--rosa-suave), #fdf3f5); }
+  .equipo.chebi { background: linear-gradient(170deg, var(--azul-suave), #f2f7fc); }
+  .equipo img { width: 100%; max-width: 170px; filter: drop-shadow(0 10px 16px rgba(109, 92, 75, .22)); transition: transform .3s ease; }
+  .equipo:hover img { transform: scale(1.04) rotate(-1deg); }
+  .equipo h4 { font-family: 'Cormorant Garamond', serif; font-size: 20px; margin-top: 10px; font-weight: 600; }
+  .equipo.tochi h4 { color: #c2708c; }
+  .equipo.chebi h4 { color: #5f83ab; }
+  .equipo p { font-size: 12px; color: var(--tinta-suave); }
+
+  .equipo.elegido { border-color: var(--oro); box-shadow: var(--sombra); transform: translateY(-4px); }
+  .equipo .palomita {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--oro);
+    color: var(--crema);
+    font-size: 15px;
+    line-height: 28px;
+    opacity: 0;
+    transform: scale(.4);
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .equipo.elegido .palomita { opacity: 1; transform: scale(1); }
+
+  .marcador-nota { margin-top: 18px; font-size: 13px; color: var(--tinta-suave); font-style: italic; font-family: 'Cormorant Garamond', serif; }
+
+  /* ---------- Formulario ---------- */
+  .campo { text-align: left; margin: 18px 0; }
+  .campo label { display: block; letter-spacing: 3px; text-transform: uppercase; font-size: 11px; color: var(--oro); margin-bottom: 8px; }
+  .campo input, .campo select {
+    width: 100%;
+    font-family: 'Jost', sans-serif;
+    font-size: 16px;
+    color: var(--tinta);
+    background: var(--crema);
+    border: 1px solid rgba(176, 141, 87, .35);
+    border-radius: 12px;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color .25s ease, box-shadow .25s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .campo input:focus, .campo select:focus { border-color: var(--oro); box-shadow: 0 0 0 3px rgba(176, 141, 87, .15); }
+
+  #msj-form { margin-top: 14px; font-size: 14px; min-height: 20px; }
+  #msj-form.error { color: #b3574d; }
+
+  #gracias { display: none; }
+  #gracias .osos-mini { font-size: 40px; }
+  #gracias h3 { font-family: 'Great Vibes', cursive; font-size: 44px; color: var(--oro); font-weight: 400; margin: 8px 0; }
+
+  /* ---------- Cierre ---------- */
+  #cierre { padding-bottom: 110px; }
+  #cierre .estrella { color: var(--oro-claro); font-size: 20px; letter-spacing: 12px; }
+  #cierre h3 { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(22px, 6vw, 28px); margin: 16px 0 6px; }
+  #cierre .script { font-size: clamp(34px, 9vw, 46px); }
+
+  @media (max-width: 380px) {
+    .cuenta .celda { min-width: 58px; }
+    .equipos { gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="halo halo-rosa"></div>
+<div class="halo halo-azul"></div>
+
+<!-- Portada tipo sobre: toca para abrir -->
+<div id="sobre">
+  <div class="sello"><span>L · A</span><small>26 · 07 · 26</small></div>
+  <div>
+    <p>Tenemos un secreto que contarte</p>
+    <h1>¿Tochi o Chebi?</h1>
+  </div>
+  <p>— Toca para abrir —</p>
+</div>
+
+<main>
+  <!-- 1 · Portada -->
+  <section id="hero">
+    <p class="eyebrow revela">Revelación de género</p>
+    <p class="nombres revela">Leonel <span class="amp">&amp;</span> Aleida</p>
+    <h2 class="revela">¿Tochi o Chebi?</h2>
+    <p class="subtitulo revela">Ayúdanos a descubrir el gran secreto…</p>
+    <div class="ositos revela">
+      <img class="osita-tochi" src="assets/tochi.png" alt="Osita Tochi con moños rosas">
+      <img class="osito-chebi" src="assets/chebi.png" alt="Osito Chebi en su coche azul">
+    </div>
+    <p class="fecha-hero revela">26 · Julio · 2026</p>
+    <div class="flecha revela">↓</div>
+  </section>
+
+  <!-- 2 · Detalles + cuenta regresiva -->
+  <section>
+    <div class="tarjeta revela">
+      <p class="eyebrow">Cuándo y dónde</p>
+      <div class="divisor">✦</div>
+      <div class="dato">
+        <p class="etq">Fecha</p>
+        <p class="val serif">Domingo 26 de julio de 2026<em>4:00 de la tarde</em></p>
+      </div>
+      <div class="dato">
+        <p class="etq">Lugar</p>
+        <p class="val serif">“Quinta Treviño”<em>Nogal, Carrizalejo, 65770 Gral. Zuazua, N.L.</em></p>
+      </div>
+      <a class="boton boton-linea" target="_blank" rel="noopener"
+         href="https://www.google.com/maps/search/?api=1&query=Quinta+Trevi%C3%B1o%2C+Nogal%2C+Carrizalejo%2C+65770+Gral.+Zuazua%2C+N.L.">
+        📍 Cómo llegar
+      </a>
+      <div class="divisor">✦</div>
+      <p class="eyebrow">Falta muy poco</p>
+      <div class="cuenta" id="cuenta">
+        <div class="celda"><div class="num" id="cd-d">–</div><div class="lab">días</div></div>
+        <div class="celda"><div class="num" id="cd-h">–</div><div class="lab">horas</div></div>
+        <div class="celda"><div class="num" id="cd-m">–</div><div class="lab">min</div></div>
+        <div class="celda"><div class="num" id="cd-s">–</div><div class="lab">seg</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · Votación -->
+  <section>
+    <p class="eyebrow revela">Hagamos una apuesta</p>
+    <h3 class="script revela" style="font-size: clamp(38px, 10vw, 54px);">¿A quién se parecerá?</h3>
+    <p class="revela serif" style="font-style: italic; color: var(--tinta-suave);">Elige tu equipo y díselo al mundo</p>
+    <div class="equipos revela">
+      <div class="equipo tochi" data-voto="Tochi" role="button" tabindex="0" aria-label="Votar Team Tochi (niña)">
+        <span class="palomita">✓</span>
+        <img src="assets/team-girl.png" alt="Aleida de bebé — Team Girl">
+        <h4>Team Tochi</h4>
+        <p>como su mami 🎀</p>
+      </div>
+      <div class="equipo chebi" data-voto="Chebi" role="button" tabindex="0" aria-label="Votar Team Chebi (niño)">
+        <span class="palomita">✓</span>
+        <img src="assets/team-boy.png" alt="Leonel de niño — Team Boy">
+        <h4>Team Chebi</h4>
+        <p>como su papi 🧢</p>
+      </div>
+    </div>
+    <p class="marcador-nota revela">Tu voto se envía junto con tu confirmación ↓</p>
+  </section>
+
+  <!-- 4 · Confirmación -->
+  <section>
+    <div class="tarjeta revela">
+      <div id="formulario">
+        <p class="eyebrow">Confirma tu asistencia</p>
+        <div class="divisor">🧸</div>
+        <div class="campo">
+          <label for="familia">Familia</label>
+          <input id="familia" type="text" placeholder="Ej. Familia Hernández" autocomplete="off" maxlength="60">
+        </div>
+        <div class="campo">
+          <label for="personas">¿Cuántos asistirán?</label>
+          <select id="personas"></select>
+        </div>
+        <div class="campo">
+          <label>Tu voto</label>
+          <input id="voto-visible" type="text" readonly value="Aún no eliges equipo ☝" style="cursor: default;">
+        </div>
+        <button class="boton" id="btn-confirmar" style="margin-top: 10px;">Confirmar asistencia</button>
+        <p id="msj-form"></p>
+      </div>
+      <div id="gracias">
+        <p class="osos-mini">🧸✨</p>
+        <h3>¡Gracias!</h3>
+        <p class="serif" style="font-size: 19px;" id="gracias-texto">Tu confirmación quedó registrada.</p>
+        <p style="font-size: 14px; color: var(--tinta-suave); margin-top: 10px;">Nos vemos el 26 de julio · Quinta Treviño</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · Cierre -->
+  <section id="cierre">
+    <p class="estrella revela">✦ ✦ ✦</p>
+    <h3 class="revela">Bebé Hernández Duarte</h3>
+    <p class="script revela">llega en diciembre 2026</p>
+    <p class="revela" style="margin-top: 18px; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--tinta-suave);">Con amor, Leonel &amp; Aleida</p>
+  </section>
+</main>
+
+<script src="config.js"></script>
+<script>
+  // ---------- Sobre de apertura ----------
+  const sobre = document.getElementById('sobre');
+  sobre.addEventListener('click', () => {
+    sobre.classList.add('abierto');
+    document.querySelectorAll('#hero .revela').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), 250 + i * 180);
+    });
+  }, { once: true });
+
+  // ---------- Animaciones al hacer scroll ----------
+  const observador = new IntersectionObserver(entradas => {
+    entradas.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: .18 });
+  document.querySelectorAll('section:not(#hero) .revela').forEach(el => observador.observe(el));
+
+  // ---------- Cuenta regresiva ----------
+  const objetivo = new Date('2026-07-26T16:00:00-06:00').getTime();
+  const pad = n => String(n).padStart(2, '0');
+  function tic() {
+    const resto = objetivo - Date.now();
+    if (resto <= 0) {
+      document.getElementById('cuenta').innerHTML =
+        '<p class="serif" style="font-size:26px;font-style:italic;color:var(--oro);">¡Es hoy! 🎉</p>';
+      clearInterval(reloj);
+      return;
+    }
+    document.getElementById('cd-d').textContent = Math.floor(resto / 864e5);
+    document.getElementById('cd-h').textContent = pad(Math.floor(resto / 36e5) % 24);
+    document.getElementById('cd-m').textContent = pad(Math.floor(resto / 6e4) % 60);
+    document.getElementById('cd-s').textContent = pad(Math.floor(resto / 1e3) % 60);
+  }
+  const reloj = setInterval(tic, 1000);
+  tic();
+
+  // ---------- Votación ----------
+  let voto = '';
+  document.querySelectorAll('.equipo').forEach(card => {
+    const elegir = () => {
+      document.querySelectorAll('.equipo').forEach(c => c.classList.remove('elegido'));
+      card.classList.add('elegido');
+      voto = card.dataset.voto;
+      document.getElementById('voto-visible').value =
+        voto === 'Tochi' ? 'Team Tochi 🎀 (niña)' : 'Team Chebi 🧢 (niño)';
+    };
+    card.addEventListener('click', elegir);
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); elegir(); } });
+  });
+
+  // ---------- Personas (1 a 12) ----------
+  const sel = document.getElementById('personas');
+  for (let i = 1; i <= 12; i++) {
+    sel.add(new Option(i === 1 ? '1 persona' : i + ' personas', i));
+  }
+  sel.value = '2';
+
+  // ---------- Confirmación ----------
+  const btn = document.getElementById('btn-confirmar');
+  const msj = document.getElementById('msj-form');
+
+  function mostrarGracias(texto) {
+    document.getElementById('formulario').style.display = 'none';
+    const g = document.getElementById('gracias');
+    if (texto) document.getElementById('gracias-texto').textContent = texto;
+    g.style.display = 'block';
+  }
+
+  // Si esta familia ya confirmó desde este teléfono, mostramos el agradecimiento
+  const previa = localStorage.getItem('rsvp_tochi_chebi');
+  if (previa) {
+    const d = JSON.parse(previa);
+    mostrarGracias(`${d.familia} · ${d.personas} ${d.personas == 1 ? 'persona' : 'personas'} · Team ${d.voto || '—'}`);
+  }
+
+  btn.addEventListener('click', async () => {
+    const familia = document.getElementById('familia').value.trim();
+    const personas = sel.value;
+    msj.className = '';
+    msj.textContent = '';
+
+    if (!familia) { msj.className = 'error'; msj.textContent = 'Escribe el nombre de tu familia 🙏'; return; }
+    if (!voto) { msj.className = 'error'; msj.textContent = 'No olvides elegir tu equipo: ¿Tochi o Chebi? ☝'; return; }
+
+    btn.disabled = true;
+    msj.textContent = 'Enviando…';
+
+    try {
+      if (!SCRIPT_URL) throw new Error('sin-backend');
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'rsvp', familia, personas: Number(personas), voto })
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error('respuesta-invalida');
+      localStorage.setItem('rsvp_tochi_chebi', JSON.stringify({ familia, personas, voto }));
+      mostrarGracias(`${familia} · ${personas} ${personas == 1 ? 'persona' : 'personas'} · Team ${voto}`);
+    } catch (err) {
+      btn.disabled = false;
+      if (WHATSAPP_PHONE) {
+        const texto = encodeURIComponent(`¡Hola! Somos ${familia} y confirmamos asistencia a la revelación de género (${personas} ${personas == 1 ? 'persona' : 'personas'}). ¡Vamos con Team ${voto}! 🧸`);
+        msj.className = 'error';
+        msj.innerHTML = `No pudimos registrar tu confirmación en línea. <a href="https://wa.me/${WHATSAPP_PHONE}?text=${texto}" style="color:var(--oro);font-weight:500;">Confírmanos por WhatsApp aquí</a> 💬`;
+      } else {
+        msj.className = 'error';
+        msj.textContent = 'No pudimos registrar tu confirmación. Intenta de nuevo en un momento 🙏';
+      }
+    }
+  });
+</script>
+</body>
+</html>
