@@ -124,7 +124,7 @@
 <body>
 <div class="caja">
   <h1>¿Tochi o Chebi?</h1>
-  <p class="sub">Panel de invitados</p>
+  <p class="sub">Marcador de votos</p>
 
   <!-- Acceso con PIN -->
   <div id="pin-panel" class="tarjeta">
@@ -137,32 +137,22 @@
   <!-- Panel -->
   <div id="panel">
     <div class="kpis">
-      <div class="kpi"><div class="num" id="k-familias">0</div><div class="lab">Familias</div></div>
-      <div class="kpi"><div class="num" id="k-personas">0</div><div class="lab">Personas</div></div>
-      <div class="kpi"><div class="num" id="k-votos">0 · 0</div><div class="lab">🎀 vs 🧢</div></div>
+      <div class="kpi"><div class="num" id="k-total">0</div><div class="lab">Votos totales</div></div>
+      <div class="kpi"><div class="num" id="k-tochi">0</div><div class="lab">🎀 Niña</div></div>
+      <div class="kpi"><div class="num" id="k-chebi">0</div><div class="lab">🧢 Niño</div></div>
     </div>
 
     <div class="tarjeta">
       <p class="titulo-seccion">Marcador de la apuesta</p>
       <div class="marcador">
-        <span class="tochi">Team Tochi 🎀 <span id="m-tochi">0</span></span>
-        <span class="chebi"><span id="m-chebi">0</span> 🧢 Team Chebi</span>
+        <span class="tochi">Niña 🎀 <span id="m-tochi">0</span></span>
+        <span class="chebi"><span id="m-chebi">0</span> 🧢 Niño</span>
       </div>
       <div class="barra">
         <div class="lado-tochi" id="b-tochi" style="width:50%"></div>
         <div class="lado-chebi" id="b-chebi" style="width:50%"></div>
       </div>
-    </div>
-
-    <div class="tarjeta">
-      <p class="titulo-seccion">Familias confirmadas</p>
-      <div id="estado">Cargando…</div>
-      <table id="tabla" style="display:none;">
-        <thead>
-          <tr><th>Familia</th><th class="centro">Personas</th><th class="centro">Voto</th><th class="fecha">Registro</th></tr>
-        </thead>
-        <tbody id="filas"></tbody>
-      </table>
+      <div id="estado" style="display:none;"></div>
       <div class="acciones">
         <button class="boton" id="btn-actualizar" style="margin-top:16px;">⟳ Actualizar</button>
       </div>
@@ -200,11 +190,8 @@
 
   async function cargar() {
     const estado = document.getElementById('estado');
-    const tabla = document.getElementById('tabla');
-    const filas = document.getElementById('filas');
     estado.style.display = 'block';
     estado.textContent = 'Cargando…';
-    tabla.style.display = 'none';
 
     try {
       if (!SCRIPT_URL) throw new Error('Falta configurar SCRIPT_URL en config.js');
@@ -212,42 +199,22 @@
       const data = await res.json();
       if (!data.ok) throw new Error('Respuesta inválida del servidor');
 
-      const lista = data.registros || [];
-      let personas = 0, vTochi = 0, vChebi = 0;
-      filas.innerHTML = '';
+      const vTochi = (data.votos && data.votos.Tochi) || 0;
+      const vChebi = (data.votos && data.votos.Chebi) || 0;
+      const total = vTochi + vChebi;
 
-      lista.slice().reverse().forEach(r => {
-        personas += Number(r.personas) || 0;
-        if (r.voto === 'Tochi') vTochi++;
-        if (r.voto === 'Chebi') vChebi++;
-        const fecha = r.fecha ? new Date(r.fecha).toLocaleString('es-MX', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="familia"></td>
-          <td class="centro"></td>
-          <td class="centro"><span class="pill ${r.voto === 'Tochi' || r.voto === 'Chebi' ? r.voto : ''}"></span></td>
-          <td class="fecha"></td>`;
-        tr.children[0].textContent = r.familia;
-        tr.children[1].textContent = r.personas;
-        tr.children[2].firstElementChild.textContent = r.voto === 'Tochi' ? '🎀 Tochi' : r.voto === 'Chebi' ? '🧢 Chebi' : '—';
-        tr.children[3].textContent = fecha;
-        filas.appendChild(tr);
-      });
-
-      document.getElementById('k-familias').textContent = lista.length;
-      document.getElementById('k-personas').textContent = personas;
-      document.getElementById('k-votos').textContent = `${vTochi} · ${vChebi}`;
+      document.getElementById('k-total').textContent = total;
+      document.getElementById('k-tochi').textContent = vTochi;
+      document.getElementById('k-chebi').textContent = vChebi;
       document.getElementById('m-tochi').textContent = vTochi;
       document.getElementById('m-chebi').textContent = vChebi;
-      const total = vTochi + vChebi;
       document.getElementById('b-tochi').style.width = total ? (vTochi / total * 100) + '%' : '50%';
       document.getElementById('b-chebi').style.width = total ? (vChebi / total * 100) + '%' : '50%';
 
-      if (lista.length === 0) {
-        estado.textContent = 'Aún no hay confirmaciones. ¡Comparte la invitación! 💌';
+      if (total === 0) {
+        estado.textContent = 'Aún no hay votos. ¡Comparte la invitación! 💌';
       } else {
         estado.style.display = 'none';
-        tabla.style.display = 'table';
       }
     } catch (err) {
       estado.textContent = '⚠ No se pudieron cargar los datos: ' + err.message;

@@ -1,19 +1,18 @@
 /**
- * Backend de confirmaciones — Revelación de género "¿Tochi o Chebi?"
+ * Backend de votos — Revelación de género "¿Niño o Niña?"
  *
- * Pega este código en un proyecto de Google Apps Script vinculado a tu
- * hoja de cálculo (instrucciones en SETUP-GOOGLE-SHEETS.md) y publícalo
- * como Web App con acceso para "Cualquier persona".
+ * Publicado como Web App (acceso: Cualquier persona).
+ * Los votos se guardan en la hoja "Votos" de la hoja de cálculo.
  */
 
-var NOMBRE_HOJA = 'Confirmaciones';
+var NOMBRE_HOJA_VOTOS = 'Votos';
 
-function obtenerHoja() {
+function obtenerHojaVotos() {
   var libro = SpreadsheetApp.getActiveSpreadsheet();
-  var hoja = libro.getSheetByName(NOMBRE_HOJA);
+  var hoja = libro.getSheetByName(NOMBRE_HOJA_VOTOS);
   if (!hoja) {
-    hoja = libro.insertSheet(NOMBRE_HOJA);
-    hoja.appendRow(['Fecha registro', 'Familia', 'Personas', 'Voto']);
+    hoja = libro.insertSheet(NOMBRE_HOJA_VOTOS);
+    hoja.appendRow(['Fecha', 'Voto']);
     hoja.setFrozenRows(1);
   }
   return hoja;
@@ -25,40 +24,34 @@ function respuestaJson(objeto) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-/** GET ?action=list — devuelve todas las confirmaciones */
+/** GET ?action=list — devuelve el conteo de votos */
 function doGet(e) {
   var action = (e && e.parameter && e.parameter.action) || '';
   if (action !== 'list') {
-    return respuestaJson({ ok: true, mensaje: 'Backend Tochi o Chebi funcionando 🧸' });
+    return respuestaJson({ ok: true, mensaje: 'Backend Niño o Niña funcionando 🧸' });
   }
-  var hoja = obtenerHoja();
-  var valores = hoja.getDataRange().getValues();
+  var valores = obtenerHojaVotos().getDataRange().getValues();
+  var votos = { Tochi: 0, Chebi: 0 };
   var registros = [];
   for (var i = 1; i < valores.length; i++) {
-    registros.push({
-      fecha: valores[i][0],
-      familia: valores[i][1],
-      personas: valores[i][2],
-      voto: valores[i][3]
-    });
+    var voto = valores[i][1];
+    if (votos[voto] !== undefined) votos[voto]++;
+    registros.push({ fecha: valores[i][0], voto: voto });
   }
-  return respuestaJson({ ok: true, registros: registros });
+  return respuestaJson({ ok: true, votos: votos, registros: registros });
 }
 
-/** POST — registra una confirmación { action:'rsvp', familia, personas, voto } */
+/** POST — registra un voto { action:'voto', voto:'Tochi'|'Chebi' } */
 function doPost(e) {
   try {
     var datos = JSON.parse(e.postData.contents);
-    if (datos.action !== 'rsvp') {
+    if (datos.action !== 'voto') {
       return respuestaJson({ ok: false, error: 'Acción desconocida' });
     }
-    var familia = String(datos.familia || '').trim().substring(0, 80);
-    var personas = Math.max(1, Math.min(30, parseInt(datos.personas, 10) || 1));
-    var voto = datos.voto === 'Tochi' || datos.voto === 'Chebi' ? datos.voto : '';
-    if (!familia) {
-      return respuestaJson({ ok: false, error: 'Falta el nombre de la familia' });
+    if (datos.voto !== 'Tochi' && datos.voto !== 'Chebi') {
+      return respuestaJson({ ok: false, error: 'Voto inválido' });
     }
-    obtenerHoja().appendRow([new Date(), familia, personas, voto]);
+    obtenerHojaVotos().appendRow([new Date(), datos.voto]);
     return respuestaJson({ ok: true });
   } catch (err) {
     return respuestaJson({ ok: false, error: String(err) });

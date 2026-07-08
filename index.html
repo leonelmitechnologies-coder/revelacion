@@ -315,32 +315,6 @@
   .atuendo.azul h4 { color: #5f83ab; }
   .atuendo p { font-size: 13px; color: var(--tinta-suave); }
 
-  /* ---------- Formulario ---------- */
-  .campo { text-align: left; margin: 18px 0; }
-  .campo label { display: block; letter-spacing: 3px; text-transform: uppercase; font-size: 11px; color: var(--oro); margin-bottom: 8px; }
-  .campo input, .campo select {
-    width: 100%;
-    font-family: 'Jost', sans-serif;
-    font-size: 16px;
-    color: var(--tinta);
-    background: var(--crema);
-    border: 1px solid rgba(176, 141, 87, .35);
-    border-radius: 12px;
-    padding: 14px 16px;
-    outline: none;
-    transition: border-color .25s ease, box-shadow .25s ease;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  .campo input:focus, .campo select:focus { border-color: var(--oro); box-shadow: 0 0 0 3px rgba(176, 141, 87, .15); }
-
-  #msj-form { margin-top: 14px; font-size: 14px; min-height: 20px; }
-  #msj-form.error { color: #b3574d; }
-
-  #gracias { display: none; }
-  #gracias .osos-mini { font-size: 40px; }
-  #gracias h3 { font-family: 'Great Vibes', cursive; font-size: 44px; color: var(--oro); font-weight: 400; margin: 8px 0; }
-
   /* ---------- Cierre ---------- */
   #cierre { padding-bottom: 110px; }
   #cierre .estrella { color: var(--oro-claro); font-size: 20px; letter-spacing: 12px; }
@@ -450,7 +424,7 @@
         <h4>Como su papi 🧢</h4>
       </div>
     </div>
-    <p class="marcador-nota revela">Tu voto se envía junto con tu confirmación ↓</p>
+    <p class="marcador-nota revela" id="nota-voto">Toca tu favorito para registrar tu voto</p>
   </section>
 
   <!-- 4 · Vestimenta -->
@@ -470,36 +444,6 @@
           <h4>Azul</h4>
           <p>si crees que es niño</p>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 5 · Confirmación -->
-  <section>
-    <div class="tarjeta revela">
-      <div id="formulario">
-        <p class="eyebrow">Confirma tu asistencia</p>
-        <div class="divisor">🧸</div>
-        <div class="campo">
-          <label for="familia">Familia</label>
-          <input id="familia" type="text" placeholder="Ej. Familia Hernández" autocomplete="off" maxlength="60">
-        </div>
-        <div class="campo">
-          <label for="personas">¿Cuántos asistirán?</label>
-          <select id="personas"></select>
-        </div>
-        <div class="campo">
-          <label>Tu voto</label>
-          <input id="voto-visible" type="text" readonly value="Aún no eliges equipo ☝" style="cursor: default;">
-        </div>
-        <button class="boton" id="btn-confirmar" style="margin-top: 10px;">Confirmar asistencia</button>
-        <p id="msj-form"></p>
-      </div>
-      <div id="gracias">
-        <p class="osos-mini">🧸✨</p>
-        <h3>¡Gracias!</h3>
-        <p class="serif" style="font-size: 19px;" id="gracias-texto">Tu confirmación quedó registrada.</p>
-        <p style="font-size: 14px; color: var(--tinta-suave); margin-top: 10px;">Nos vemos el 26 de julio · Quinta Treviño</p>
       </div>
     </div>
   </section>
@@ -584,81 +528,49 @@
   const reloj = setInterval(tic, 1000);
   tic();
 
-  // ---------- Votación ----------
-  let voto = '';
+  // ---------- Votación (se registra al tocar) ----------
+  const notaVoto = document.getElementById('nota-voto');
+  const etiquetaVoto = v => v === 'Tochi' ? 'niña, como su mami 🎀' : 'niño, como su papi 🧢';
+  let enviandoVoto = false;
+
+  function marcarElegido(votoGuardado) {
+    document.querySelectorAll('.equipo').forEach(c =>
+      c.classList.toggle('elegido', c.dataset.voto === votoGuardado));
+  }
+
+  // Si ya votó desde este teléfono, mostramos su voto
+  const votoPrevio = localStorage.getItem('voto_nino_nina');
+  if (votoPrevio) {
+    marcarElegido(votoPrevio);
+    notaVoto.textContent = `Tu voto quedó registrado: ${etiquetaVoto(votoPrevio)} ¡Gracias! 💛`;
+  }
+
   document.querySelectorAll('.equipo').forEach(card => {
-    const elegir = () => {
-      document.querySelectorAll('.equipo').forEach(c => c.classList.remove('elegido'));
-      card.classList.add('elegido');
-      voto = card.dataset.voto;
-      document.getElementById('voto-visible').value =
-        voto === 'Tochi' ? 'Como su mami 🎀 (niña)' : 'Como su papi 🧢 (niño)';
+    const elegir = async () => {
+      if (localStorage.getItem('voto_nino_nina') || enviandoVoto) return;
+      const voto = card.dataset.voto;
+      enviandoVoto = true;
+      marcarElegido(voto);
+      notaVoto.textContent = 'Registrando tu voto…';
+      try {
+        if (!SCRIPT_URL) throw new Error('sin-backend');
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'voto', voto })
+        });
+        const data = await res.json();
+        if (!data.ok) throw new Error('respuesta-invalida');
+        localStorage.setItem('voto_nino_nina', voto);
+        notaVoto.textContent = `Tu voto quedó registrado: ${etiquetaVoto(voto)} ¡Gracias! 💛`;
+      } catch (err) {
+        marcarElegido('');
+        notaVoto.textContent = 'No pudimos registrar tu voto, intenta de nuevo en un momento 🙏';
+      }
+      enviandoVoto = false;
     };
     card.addEventListener('click', elegir);
     card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); elegir(); } });
-  });
-
-  // ---------- Personas (1 a 12) ----------
-  const sel = document.getElementById('personas');
-  for (let i = 1; i <= 12; i++) {
-    sel.add(new Option(i === 1 ? '1 persona' : i + ' personas', i));
-  }
-  sel.value = '2';
-
-  // ---------- Confirmación ----------
-  const btn = document.getElementById('btn-confirmar');
-  const msj = document.getElementById('msj-form');
-
-  function mostrarGracias(texto) {
-    document.getElementById('formulario').style.display = 'none';
-    const g = document.getElementById('gracias');
-    if (texto) document.getElementById('gracias-texto').textContent = texto;
-    g.style.display = 'block';
-  }
-
-  // Si esta familia ya confirmó desde este teléfono, mostramos el agradecimiento
-  const etiquetaVoto = v => v === 'Tochi' ? 'Niña 🎀' : v === 'Chebi' ? 'Niño 🧢' : '—';
-
-  const previa = localStorage.getItem('rsvp_tochi_chebi');
-  if (previa) {
-    const d = JSON.parse(previa);
-    mostrarGracias(`${d.familia} · ${d.personas} ${d.personas == 1 ? 'persona' : 'personas'} · ${etiquetaVoto(d.voto)}`);
-  }
-
-  btn.addEventListener('click', async () => {
-    const familia = document.getElementById('familia').value.trim();
-    const personas = sel.value;
-    msj.className = '';
-    msj.textContent = '';
-
-    if (!familia) { msj.className = 'error'; msj.textContent = 'Escribe el nombre de tu familia 🙏'; return; }
-    if (!voto) { msj.className = 'error'; msj.textContent = 'No olvides elegir tu equipo: ¿Tochi o Chebi? ☝'; return; }
-
-    btn.disabled = true;
-    msj.textContent = 'Enviando…';
-
-    try {
-      if (!SCRIPT_URL) throw new Error('sin-backend');
-      const res = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'rsvp', familia, personas: Number(personas), voto })
-      });
-      const data = await res.json();
-      if (!data.ok) throw new Error('respuesta-invalida');
-      localStorage.setItem('rsvp_tochi_chebi', JSON.stringify({ familia, personas, voto }));
-      mostrarGracias(`${familia} · ${personas} ${personas == 1 ? 'persona' : 'personas'} · ${etiquetaVoto(voto)}`);
-    } catch (err) {
-      btn.disabled = false;
-      if (WHATSAPP_PHONE) {
-        const texto = encodeURIComponent(`¡Hola! Somos ${familia} y confirmamos asistencia a la revelación de género (${personas} ${personas == 1 ? 'persona' : 'personas'}). Nuestro voto: ${voto === 'Tochi' ? 'niña, como su mami 🎀' : 'niño, como su papi 🧢'} 🧸`);
-        msj.className = 'error';
-        msj.innerHTML = `No pudimos registrar tu confirmación en línea. <a href="https://wa.me/${WHATSAPP_PHONE}?text=${texto}" style="color:var(--oro);font-weight:500;">Confírmanos por WhatsApp aquí</a> 💬`;
-      } else {
-        msj.className = 'error';
-        msj.textContent = 'No pudimos registrar tu confirmación. Intenta de nuevo en un momento 🙏';
-      }
-    }
   });
 </script>
 </body>
