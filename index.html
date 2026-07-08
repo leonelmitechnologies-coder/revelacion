@@ -87,30 +87,18 @@
   }
   #sobre.abierto { opacity: 0; visibility: hidden; }
 
-  .sello {
-    width: 128px;
-    height: 128px;
-    border-radius: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(circle at 35% 30%, #d9b98a, var(--oro) 70%);
-    color: var(--crema);
-    box-shadow: var(--sombra), inset 0 0 0 5px rgba(250, 246, 239, .35), inset 0 0 0 7px rgba(176, 141, 87, .9);
-    font-family: 'Cormorant Garamond', serif;
-    animation: latido 2.4s ease-in-out infinite;
+  .foto-sobre {
+    width: clamp(220px, 64vw, 320px);
+    filter: drop-shadow(0 18px 30px rgba(109, 92, 75, .35));
+    animation: latido 2.8s ease-in-out infinite;
   }
-  .sello span { font-size: 34px; letter-spacing: 2px; }
-  .sello small { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; }
 
   @keyframes latido {
     0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.06); }
+    50% { transform: scale(1.04); }
   }
 
-  #sobre h1 { font-family: 'Great Vibes', cursive; font-weight: 400; font-size: clamp(38px, 9vw, 56px); color: var(--oro); }
-  #sobre p { letter-spacing: 4px; text-transform: uppercase; font-size: 12px; color: var(--tinta-suave); }
+  #sobre p { letter-spacing: 4px; text-transform: uppercase; font-size: 13px; color: var(--tinta-suave); }
 
   /* ---------- Secciones ---------- */
   section { padding: 72px 24px; max-width: 640px; margin: 0 auto; text-align: center; }
@@ -333,11 +321,8 @@
 
 <!-- Portada tipo sobre: toca para abrir -->
 <div id="sobre">
-  <div class="sello"><span>L · A</span><small>26 · 07 · 26</small></div>
-  <div>
-    <p>Tenemos un secreto que contarte</p>
-    <h1>¿Tochi o Chebi?</h1>
-  </div>
+  <img class="foto-sobre" src="assets/peques.png" alt="Dos pequeños abrazándose">
+  <p>Tenemos un secreto que contarte</p>
   <p>— Toca para abrir —</p>
 </div>
 
